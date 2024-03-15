@@ -1,6 +1,4 @@
 import numpy as np
-import copy
-import abc
 
 #----------------------------------------------------------------------------------------------------------     
 #Connect four
@@ -26,7 +24,6 @@ class Connect4():
          #   print(pos)
             #self.playRandomMove()
             return self.board, -1 ,True
-            raise Exception("Ilegal move")
 
         self.board[pos,int(self.cellHeight[pos]),color]=1
         self.cellHeight[pos]+=1
@@ -100,9 +97,7 @@ class Connect4():
             self.draw=True
         self.representation = self.board
     
-
         return self.board, -self.game_over ,self.game_over
-
 
     def get_legal_moves(self):
         moves = []
@@ -115,7 +110,6 @@ class Connect4():
         p = np.random.choice(np.flatnonzero(self.legal_moves == self.legal_moves.max()))
         self.push(p)
 
-    
     def show(self):
         print("-------")
         for a in range(5,-1,-1):
