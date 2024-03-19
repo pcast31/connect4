@@ -43,7 +43,6 @@ class QLearningAgent:
 def play_game():
     # Création des agents Q-learning
     agent1 = QLearningAgent(action_size=7)
-    agent2 = QLearningAgent(action_size=7)
     # Boucle principale
     for episode in tqdm.tqdm(range(100000)):
         game = Connect4()
@@ -63,14 +62,14 @@ def play_game():
                 break
 
             # Joueur 2 choisit une action
-            action2 = agent2.choose_action(state)
+            action2 = agent1.choose_action(state)
             # Mise à jour de l'état
             next_state, reward, done = game.push(action2,color=1)
             # Mise à jour de la table Q du joueur 2
-            agent2.update_q_table(state, action2, reward, next_state)
+            agent1.update_q_table(state, action2, reward, next_state)
 
             state = next_state
-    return agent1, agent2
+    return agent1
 
 
 def play_a_game(agent1,agent2):
@@ -96,5 +95,5 @@ def play_a_game(agent1,agent2):
             game.show()
 
 if __name__=="__main__":
-    ag1,ag2 = play_game()
-    play_a_game(ag1,ag2)
+    ag1 = play_game()
+    play_a_game(ag1,ag1)
