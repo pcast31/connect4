@@ -96,29 +96,3 @@ def playgame():
         if episode % 2 == 0:
             agent.update_q_table()
     return agent,agent
-
-def play_a_game(agent1,agent2):
-    game = Connect4()
-    state = game.board
-    done=False
-    while not done:
-            # Joueur 1 choisit une action
-            action1 = agent1.choose_action(state)
-            # Mise à jour de l'état
-            next_state, reward, done = game.push(action1,color=0)
-            # Mise à jour de la table Q du joueur 1
-
-            if done:
-                break
-            state = next_state
-            # Joueur 2 choisit une action
-            action2 = agent2.choose_action(state)
-            # Mise à jour de l'état
-            next_state, reward, done = game.push(action2,color=1)
-            # Mise à jour de la table Q du joueur 2
-            state = next_state
-            game.show()
-
-if __name__=="__main__":
-    ag1,ag2 = playgame()
-    play_a_game(ag1,ag2)
