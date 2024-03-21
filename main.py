@@ -48,6 +48,6 @@ if __name__=="__main__":
     game = Connect4()
     ag1, ag2 = QLearningAgent(action_size=args.action_size, name="QAgent1"), QLearningAgent(action_size=args.action_size, name="QAgent2")
     ag1, ag2 = train_agents(ag1, ag2, args.n_episodes)
-    hum = HumanAgent()
+    hum1, hum2 = HumanAgent(), HumanAgent()
     # game.play_a_game(ag1, ag2)
-    display_game(hum, ag1)
+    display_game(hum1, ag2)
