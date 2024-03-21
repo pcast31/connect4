@@ -136,12 +136,15 @@ class Connect4():
         print("-------")
     
 
-    def play_a_game(self, agent1, agent2):
+    def play_a_game(self, agent1, agent2,human=False):
         state = self.board
         done = False
         while not done:
+            if human==1:
+                action1 = int(input()) 
+            else: 
             # Joueur 1 choisit une action
-            action1 = agent1.choose_action(state)
+                action1 = agent1.choose_action(state)
             # Mise à jour de l'état
             next_state, reward, done = self.push(action1, color=0)
             # Mise à jour de la table Q du joueur 1
@@ -150,8 +153,11 @@ class Connect4():
             if done:
                 break
 
+            if human==2:
+                action2 = int(input())
+            else:
             # Joueur 2 choisit une action
-            action2 = agent2.choose_action(state)
+                action2 = agent2.choose_action(state)
             # Mise à jour de l'état
             next_state, reward, done = self.push(action2, color=1)
             # Mise à jour de la table Q du joueur 2
