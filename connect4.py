@@ -153,7 +153,9 @@ class Connect4():
             # Joueur 2 choisit une action
             action2 = agent2.choose_action(state)
             # Mise à jour de l'état
-            next_state, reward, done = self.push(action2,color=1)
+            next_state, reward, done = self.push(action2, color=1)
             # Mise à jour de la table Q du joueur 2
             state = next_state
             self.show()
+        print(action1, action2)
+        print(self.winner)

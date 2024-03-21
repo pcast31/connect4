@@ -8,7 +8,7 @@ from utils import argmax
 class QLearningAgent:
 
 
-    def __init__(self, action_size, learning_rate=0.1, discount_factor=0.9, exploration_rate=0.3):
+    def __init__(self, action_size, name="QAgent", learning_rate=0.1, discount_factor=0.9, exploration_rate=0.3):
         self.action_size = action_size
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
@@ -16,15 +16,16 @@ class QLearningAgent:
         self.q_table = defaultdict(lambda: np.zeros(action_size))
         self.state_to_int = {}
         self.state_max = 0
+        self.name = name
 
 
-    def value_to_int(self,val):
+    def value_to_int(self, val):
         tuple_val = tuple(val.flatten())
         if tuple_val in self.state_to_int:
             return self.state_to_int[tuple_val]
         else:
             self.state_max += 1
-            self.state_to_int[tuple_val]=self.state_max
+            self.state_to_int[tuple_val] = self.state_max
             return self.state_max
         
 
@@ -32,7 +33,6 @@ class QLearningAgent:
         if np.random.uniform(0, 1) < self.exploration_rate:
             return np.random.choice(self.action_size)
         else:
-
             return argmax(self.q_table[self.value_to_int(state)])
 
 
