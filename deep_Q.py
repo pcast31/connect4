@@ -3,7 +3,6 @@ import copy
 import numpy as np
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-import torch.nn.functional as F
 import torch.optim as optim
 import torch
 from tqdm import tqdm
@@ -27,6 +26,16 @@ def argmax(q_values):
     
     return ind
 
+class CustomDataset(Dataset):
+
+    def __init__(self, data):
+        self.data = data
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        return self.data[idx]
 
 class Deep_Q_agent:
 
@@ -67,7 +76,7 @@ class Deep_Q_agent:
 
 class ConvNet(nn.Module):
 
-    def __init__(self, optimizer=optim.Adam, criterion=nn.MSELoss(),lr=10**-5,disc_f=0.5):
+    def __init__(self, optimizer=optim.Adam, criterion=nn.MSELoss(),lr=10**-3,disc_f=0.5):
         self.input_shape = (7, 6,2)
         self.device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
         super(ConvNet, self).__init__()
@@ -96,7 +105,7 @@ class ConvNet(nn.Module):
       output = self.output(x)
       return output
 
-    def train_model(self, train_loader, epochs=10,show=False):
+    def train_model(self, train_loader, epochs=1,show=False):
         for p in self.parameters():
           p.requires_grad = True
         self.train()
