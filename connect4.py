@@ -105,7 +105,7 @@ class Connect4():
             self.draw = True
         self.representation = self.board
     
-        return self.board, -self.game_over, self.game_over
+        return self.board, win, self.game_over
 
 
     def get_legal_moves(self):
