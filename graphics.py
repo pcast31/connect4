@@ -59,14 +59,15 @@ def make_a_move(game, player):
     if "Agent" in player.name:
         time.sleep(0.5)
         move = player.choose_action(game.board)
+
     elif "Human" in player.name:
-        fen.bind("<Button-1>", left_click_move)
-        if move != -1:
-            move = player.conversion(move)
-            if move == "Illegal":
-                print("Try again")
-                move = -1
-    return(move)
+        move = player.choose_action(fen)
+
+    elif "Random" in player.name:
+        time.sleep(0.5)
+        move = player.choose_action(game.legal_moves)
+
+    return move
 
 
 def endgame(game):
