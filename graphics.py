@@ -46,7 +46,7 @@ def display_board(game, can):
     return
 
 
-move = ()
+move = -1
 
 def left_click_move(event):
     global move
@@ -54,62 +54,54 @@ def left_click_move(event):
 
 
 def make_a_move(game, player):
-    if "Human" in player.name:
-        fen.bind("<Button-1>", left_click_move)
-        if move != ():
-            print(move)
-            move = player.conversion(move)
-            if move == "Illegal":
-                print("Try again !")
-                move = make_a_move(game, player)
-    else:
-        state = game.board
-        move = player.choose_action(state)
-    return(move)
+    global move
+
+    if "Agent" in player.name:
+        time.sleep(0.5)
+        move = player.choose_action(game.board)
+
+    elif "Human" in player.name:
+        move = player.choose_action(fen)
+
+    elif "Random" in player.name:
+        time.sleep(0.5)
+        move = player.choose_action(game.legal_moves)
+
+    return move
 
 
 def endgame(game):
-    if game.game_over :
-        print("Game ended")
-        display_board(game, can)
-        can.update()
-        time.sleep(0.5)
-        if game.draw:
-            print("Draw !")
-            tk.messagebox.showinfo('Game ended', 'Draw !')
-            return 0
-        elif game.k % 2 == 0 :
-            print("Red won !" )
-            tk.messagebox.showinfo('Game ended', 'Red won !')
-            return 1
-        elif game.k % 2 == 1 :
-            print("Yellow won !" )
-            tk.messagebox.showinfo('Game ended', 'Yellow won !')
-            return -1
+    print("Game ended")
+    display_board(game, can)
+    can.update()
+    if game.draw:
+        print("Draw !")
+        tk.messagebox.showinfo('Game ended', 'Draw !')
+        return 0
+    elif game.k % 2 == 0 :
+        print("Red won !" )
+        tk.messagebox.showinfo('Game ended', 'Red won !')
+        return 1
+    elif game.k % 2 == 1 :
+        print("Yellow won !" )
+        tk.messagebox.showinfo('Game ended', 'Yellow won !')
+        return -1
 
 
 def play_game(game, player1, player2):
     global move
 
-    # time.sleep(0.5)
-    move = make_a_move(game, player1)
-    game.push(move, (game.k+1) % 2)
-    can.delete('all')
-    display_board(game, can)
-    can.update()
-    move = ()
-
-    if game.game_over:
-        return(endgame(game))
-
-    time.sleep(0.5)
-    move = make_a_move(game, player2)
-    game.push(move, (game.k+1) % 2)
-    can.delete('all')
-    display_board(game, can)
-    can.update()
-    move = ()
-
+    if (game.k + 1) % 2 == 0:
+        move = make_a_move(game, player1)
+    else:
+        move = make_a_move(game, player2)
+    if move != -1:
+        game.push(move, (game.k + 1) % 2)
+        can.delete('all')
+        display_board(game, can)
+        can.update()
+        move = -1
+    
     if game.game_over:
         return(endgame(game))
         
