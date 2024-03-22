@@ -29,11 +29,11 @@ class QLearningAgent:
             return self.state_max
         
 
-    def choose_action(self, state):
+    def choose_action(self, game):
         if np.random.uniform(0, 1) < self.exploration_rate:
             return np.random.choice(self.action_size)
         else:
-            return argmax(self.q_table[self.value_to_int(state)])
+            return argmax(self.q_table[self.value_to_int(game.board)])
 
 
     def update_q_table(self, state, action, reward, next_state):

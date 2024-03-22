@@ -12,20 +12,20 @@ def _create_circle(self, x, y, r, **kwargs):
 tk.Canvas.create_circle = _create_circle
 
 
-def display_board(game, can):
+def display_board(game):
     #Ligne de séparation :
-    can.create_line(400, 0, 400, 350, fill="black", width=3)
+    game.canva.create_line(400, 0, 400, 350, fill="black", width=3)
 
     #Quadrillage :
     #Lignes :
     l = [25 + 50*k for k in range(0, 7)]
     for k in l:
-        can.create_line(25, k, 375, k, fill="black")
+        game.canva.create_line(25, k, 375, k, fill="black")
     
     #Colonnes :
     l = [25 + 50*k for k in range(0, 8)]
     for k in l:
-        can.create_line(k, 25, k, 325, fill="black")    
+        game.canva.create_line(k, 25, k, 325, fill="black")    
     
     #Placement des pions :
     bo = game.board
@@ -33,15 +33,15 @@ def display_board(game, can):
     for x in range(7):
         for y in range(6):
             if bo[x][y][0] == 1:
-                can.create_circle(50 + 50*x, 50 + 50*(5-y), r, fill='red')
+                game.canva.create_circle(50 + 50*x, 50 + 50*(5-y), r, fill='red')
             if bo[x][y][1] == 1:
-                can.create_circle(50 + 50*x, 50 + 50*(5-y), r, fill='gold')                
+                game.canva.create_circle(50 + 50*x, 50 + 50*(5-y), r, fill='gold')                
 
     #initiative
     if game.k % 2 == 1:
-        can.create_circle(425, 25, 5, fill='red')
+        game.canva.create_circle(425, 25, 5, fill='red')
     if game.k % 2 == 0:
-        can.create_circle(425, 25, 5, fill='gold')
+        game.canva.create_circle(425, 25, 5, fill='gold')
     
     return
 
@@ -56,24 +56,17 @@ def left_click_move(event):
 def make_a_move(game, player):
     global move
 
-    if "Agent" in player.name:
+    if "Human" not in player.name:
         time.sleep(0.5)
-        move = player.choose_action(game.board)
-
-    elif "Human" in player.name:
-        move = player.choose_action(fen)
-
-    elif "Random" in player.name:
-        time.sleep(0.5)
-        move = player.choose_action(game.legal_moves)
+    move = player.choose_action(game)
 
     return move
 
 
 def endgame(game):
     print("Game ended")
-    display_board(game, can)
-    can.update()
+    display_board(game)
+    game.canva.update()
     if game.draw:
         print("Draw !")
         tk.messagebox.showinfo('Game ended', 'Draw !')
@@ -91,33 +84,40 @@ def endgame(game):
 def play_game(game, player1, player2):
     global move
 
+    # Player 1 move
     if (game.k + 1) % 2 == 0:
         move = make_a_move(game, player1)
+
+    # Player 2 move
     else:
         move = make_a_move(game, player2)
+
+    # Make the input move
     if move != -1:
         game.push(move, (game.k + 1) % 2)
-        can.delete('all')
-        display_board(game, can)
-        can.update()
+        game.canva.delete('all')
+        display_board(game)
+        game.canva.update()
         move = -1
-    
+
+    # Check if game is over
     if game.game_over:
         return(endgame(game))
         
-    can.after(20, play_game, game, player1, player2)
+    game.canva.after(20, play_game, game, player1, player2)
 
 
 def display_game(player1, player2):
     """
     Starts main function
     """
-    global fen, can
-    fen = tk.Tk(baseName="Connect4 " + player1.name + " vs " + player2.name)
-    can = tk.Canvas(fen, bg='light grey', height=350, width=450) 
-    can.pack() 
-    game = Connect4() 
-    display_board(game, can)
+    wid = tk.Tk(baseName="Connect4 " + player1.name + " vs " + player2.name)
+    can = tk.Canvas(wid, bg='light grey', height=350, width=450) 
+    can.pack()
+    game = Connect4()
+    game.window = wid
+    game.canva = can
+    display_board(game)
     can.update()
     play_game(game, player1, player2)
-    fen.mainloop()
+    wid.mainloop()
