@@ -32,7 +32,7 @@ class Connect4():
         #    print(self.legal_moves)
          #   print(pos)
             #self.playRandomMove()
-            return self.board, -1, True
+            return self.board, -2, True
 
         self.board[pos, int(self.cellHeight[pos]), color] = 1
         self.cellHeight[pos] += 1
