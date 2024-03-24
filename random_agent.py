@@ -4,12 +4,12 @@ import numpy as np
 class RandomAgent():
      
 
-    def __init__(self, name="Random"):
+    def __init__(self, n_actions=7,name="Random"):
         self.name = name
         self.move = ()
+        self.n_actions = n_actions
+        self.n_player=0
 
-
-    def choose_action(self, legal_moves):
-        move = np.random.choice(np.flatnonzero(legal_moves == legal_moves.max()))
-        return(move)
+    def choose_action(self, state,verbose=False):
+        return np.random.randint(0,self.n_actions)
     
