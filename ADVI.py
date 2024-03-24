@@ -1,6 +1,6 @@
 import autograd.numpy as np
 from autograd import elementwise_grad, jacobian
-
+import time
 
 
 class ADVI():
@@ -17,7 +17,8 @@ class ADVI():
         self.grad_logjac_inv_T = elementwise_grad(self.log_jac_inv_T)
         self.theta_size = model.theta_size
     def log_jac(self,z):
-        return np.log(np.abs(np.linalg.det(jacobian(self.inv_T)(z))))
+        return np.log(np.abs(np.prod(elementwise_grad(self.inv_T)(z))))
+        #return np.log(np.abs(np.linalg.det(jacobian(self.inv_T)(z))))
 
     def grad_log(self,theta):
         return self.model.log_distr(self.X,theta)
@@ -35,6 +36,7 @@ class ADVI():
         self.grad_mu = np.zeros(self.mu[-1].shape)
         self.grad_omega = np.zeros(self.omega[-1].shape)
         for nu_i in nu:
+                      
             zeta_i = self.nu_to_zeta(nu_i)
             theta_i = self.zeta_to_theta(zeta_i)
             log_dis = self.grad_log_distribution(theta_i)
@@ -42,7 +44,6 @@ class ADVI():
             grad_jac = self.grad_logjac_inv_T(zeta_i)
 
             self.grad_mu = self.grad_mu + log_dis*grad_inv+grad_jac
-
             if self.dependant:
                 self.grad_omega = self.grad_omega+np.outer((log_dis*grad_inv+grad_jac),nu_i)
             else:
@@ -82,7 +83,7 @@ class ADVI():
                 nu = np.random.multivariate_normal(np.zeros(P),np.eye(P),M)
             else : 
                 nu = np.random.normal(0,1,M*P)
-                nu.reshape((P,M))
+                nu = nu.reshape((M,P))
             gradient_mu,gradient_omega = self.compute_gradient_muomega(nu)
           #  gradient_omega = self.compute_gradient_omega(nu)
             step_vect = self.compute_step_size(iteration,P,lr)*iteration**-0.5
@@ -94,7 +95,11 @@ class ADVI():
             # self.omega.append(new_omega)
             self.omega.append(self.omega[-1]+step_vect*gradient_omega)
             iteration+=1
-            print(iteration,self.mu[-1],self.omega[-1]**2)
+            if self.dependant:
+                print(iteration,self.mu[-1],self.omega[-1]@self.omega[-1].T)
+            else: 
+                print(iteration,self.mu[-1],self.omega[-1]**2)
+
             print(np.linalg.norm(self.mu[-1]-self.mu[-2])+np.linalg.norm(self.omega[-1]-self.omega[-2]))
             
         return self.mu[-1],self.omega[-1]
