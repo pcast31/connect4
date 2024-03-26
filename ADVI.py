@@ -25,16 +25,16 @@ class ADVI():
 
     def nu_to_zeta(self,nu_d):
         if self.dependant:
-            return self.mu[-1]+self.omega[-1]@nu_d
+            return self.mu+self.omega@nu_d
         else:
-            return self.mu[-1]+np.exp(self.omega[-1])*nu_d
+            return self.mu+np.exp(self.omega)*nu_d
             
     def zeta_to_theta(self,zeta):
         return self.inv_T(zeta)
 
     def compute_gradient_muomega(self,nu):
-        self.grad_mu = np.zeros(self.mu[-1].shape)
-        self.grad_omega = np.zeros(self.omega[-1].shape)
+        self.grad_mu = np.zeros(self.mu.shape)
+        self.grad_omega = np.zeros(self.omega.shape)
         self.ELBO = 0
         for nu_i in nu:
                       
@@ -49,12 +49,12 @@ class ADVI():
             if self.dependant:
                 self.grad_omega = self.grad_omega+np.outer((log_dis*grad_inv+grad_jac),nu_i)
             else:
-                self.grad_omega = self.grad_omega+(log_dis*grad_inv+grad_jac)*nu_i*np.exp(self.omega[-1])
+                self.grad_omega = self.grad_omega+(log_dis*grad_inv+grad_jac)*nu_i*np.exp(self.omega)
         if self.dependant:
-            meangrad_omega = self.grad_omega/len(nu) + np.linalg.inv(self.omega[-1]).T
-            det_log = 0.5*np.log(np.linalg.det(self.omega[-1]@self.omega[-1].T))
+            meangrad_omega = self.grad_omega/len(nu) + np.linalg.inv(self.omega).T
+            det_log = 0.5*np.log(np.linalg.det(self.omega@self.omega.T))
         else: 
-            det_log = np.sum(self.omega[-1])
+            det_log = np.sum(self.omega)
             meangrad_omega = self.grad_omega/len(nu) + 1
         
         return self.grad_mu/len(nu), meangrad_omega,self.ELBO/len(nu)+det_log # + Constant
@@ -71,12 +71,12 @@ class ADVI():
         P = self.theta_size
         N = len(self.X)
         iteration=1
-        self.mu = [np.zeros(P)]
+        self.mu = np.zeros(P)
         if self.dependant:
-            self.omega = [np.eye(P)]
+            self.omega = np.eye(P)
         else: 
-            self.omega = [np.ones(P)]
-        ELBO=0
+            self.omega = np.ones(P)
+        ELBO=1
         delta_ELBO=2*eps
         #while iteration==1 or (np.linalg.norm(self.mu[-1]-self.mu[-2])+np.linalg.norm(self.omega[-1]-self.omega[-2])>eps and iteration<max_step):
         while delta_ELBO>eps:
@@ -97,17 +97,17 @@ class ADVI():
             
             self.step_mu, self.s_mu = self.compute_step_size(iteration,lr,gradient_mu,self.s_mu)
             self.step_omega, self.s_omega = self.compute_step_size(iteration,lr,gradient_omega,self.s_omega)
-            self.mu.append(self.mu[-1]+self.step_mu*gradient_mu)
-            self.omega.append(self.omega[-1]+self.step_omega*gradient_omega)
+            self.mu = self.mu+self.step_mu*gradient_mu
+            self.omega = self.omega+self.step_omega*gradient_omega
             iteration+=1
             if self.dependant:
-                print(iteration,self.mu[-1],self.omega[-1]@self.omega[-1].T)
+                print(iteration,self.mu,self.omega@self.omega.T)
             else: 
-                print(iteration,self.mu[-1],np.exp(self.omega[-1])**2)
+                print(iteration,self.mu,np.exp(self.omega)**2)
 
             #print(np.linalg.norm(self.mu[-1]-self.mu[-2])+np.linalg.norm(self.omega[-1]-self.omega[-2]))
             print(ELBO,delta_ELBO)
-        return self.mu[-1],self.omega[-1]
+        return self.mu,self.omega
 
 
 
