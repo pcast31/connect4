@@ -136,7 +136,7 @@ class Connect4():
         
         while True:
             # Joueur 1 choisit une action
-            action1 = agent1.choose_action(self)
+            action1 = agent1.choose_action(self.board)
             # Mise à jour de l'état
             next_state, reward, done = self.push(action1, color=0)
 
@@ -150,7 +150,7 @@ class Connect4():
                     return(0)
 
             # Joueur 2 choisit une action
-            action2 = agent2.choose_action(self)
+            action2 = agent2.choose_action(self.board)
             # Mise à jour de l'état
             next_state, reward, done = self.push(action2, color=1)
     
