@@ -19,6 +19,7 @@ class Connect4():
         self.game_over = False
         self.window = None
         self.canva = None
+        self.illegal_move = False
 
     
     def reset(self):
@@ -27,11 +28,11 @@ class Connect4():
 
     def push(self, pos, color=0):
         if np.sum(self.board[pos, 5])>0:
-        #    self.show()
-        #    print(self.legal_moves)
-         #   print(pos)
-            #self.playRandomMove()
-            return self.board, -1, True
+            # Illegal move
+            self.game_over = True
+            self.illegal_move = True
+            self.winner = (-1, 1)[color]
+            return self.board, -2, True
 
         self.board[pos, int(self.cellHeight[pos]), color] = 1
         self.cellHeight[pos] += 1

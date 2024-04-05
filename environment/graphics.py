@@ -1,8 +1,7 @@
-from connect4 import Connect4
+from environment.connect4 import Connect4
 import tkinter as tk
 import tkinter.messagebox
 import time
-import numpy as np
 
 
 def _create_circle(self, x, y, r, **kwargs):
@@ -58,12 +57,13 @@ def make_a_move(game, player):
 
     if "Human" not in player.name:
         time.sleep(0.5)
-    move = player.choose_action(game)
-
+        move = player.choose_action(game.board)
+    else:
+        move = player.choose_action(game)
     return move
 
 
-def endgame(game):
+def endgame(game,player1_n,player2_n):
     print("Game ended")
     display_board(game)
     game.canva.update()
@@ -73,11 +73,11 @@ def endgame(game):
         return 0
     elif game.k % 2 == 0 :
         print("Red won !" )
-        tk.messagebox.showinfo('Game ended', 'Red won !')
+        tk.messagebox.showinfo('Game ended', f'{player1_n} won !')
         return 1
     elif game.k % 2 == 1 :
         print("Yellow won !" )
-        tk.messagebox.showinfo('Game ended', 'Yellow won !')
+        tk.messagebox.showinfo('Game ended', f'{player2_n} won!')
         return -1
 
 
@@ -102,7 +102,11 @@ def play_game(game, player1, player2):
 
     # Check if game is over
     if game.game_over:
-        return(endgame(game))
+        if game.illegal_move:
+            tk.messagebox.showinfo('Game ended', 'Illegal move !')
+            return(endgame(game,player1.name,player2.name))
+        else:
+            return(endgame(game,player1.name,player2.name))
         
     game.canva.after(20, play_game, game, player1, player2)
 

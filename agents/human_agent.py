@@ -1,13 +1,10 @@
 
-
 class HumanAgent():
-     
 
     def __init__(self, name="Human"):
         self.name = name
         self.move = -1
     
-
     def conversion(self, move):
         a, b = move[0], move[1]
         if 25 <= a and a <= 375 and 25 <= b and b <= 325:
@@ -15,10 +12,8 @@ class HumanAgent():
         else:
             return "Illegal"
     
-
     def left_click_move(self, event):
         self.move = (event.x, event.y)
-
 
     def choose_action(self, game):
         if game.window == None:
